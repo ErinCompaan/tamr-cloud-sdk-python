@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package tamr.api.v1beta1;
+
+option go_package = "tamr.api.v1beta1";
+option java_package = "com.tamr.api.v1beta1.errors.protos";
+option java_multiple_files = true;
+
+message Error {
+  // A short error code that summarizes the error. This is a constant value that identifies the cause of the error.
+  // This should be at most 63 characters and match a regular expression of `[A-Z][A-Z0-9_]+[A-Z0-9]`, which represents
+  // UPPER_SNAKE_CASE.
+  string reason = 1;
+
+  // A human-readable description of the error. Error messages should be concise and helpful, providing specifics about
+  // the problem when appropriate and suggesting next steps to resolve. Error messages should not expose sensitive
+  // information about system internals.
+  string message = 2;
+}

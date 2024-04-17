@@ -1,0 +1,178 @@
+syntax = "proto3";
+
+package tamr.api.v1beta1;
+
+option go_package = "tamr.api.v1beta1";
+option java_package = "com.tamr.api.v1beta1.jobs.protos";
+option java_multiple_files = true;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+import "tamr/api/v1beta1/errors.proto";
+
+service Jobs {
+  // Gets details of a job.
+  rpc GetJob (GetJobRequest) returns (Job) {
+    option (google.api.http) = {
+      get: "/api/v1beta1/jobs/{job_id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "get"
+      description: "Fetch details of a job, including its configuration and status."
+    };
+  }
+
+  // Lists a page of jobs.
+  rpc ListJobs (ListJobsRequest) returns (ListJobsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1beta1/jobs"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list"
+      description: "Fetch a page of jobs."
+    };
+  }
+
+  // Signals a job to stop executing. `PENDING` jobs are cancelled immediately. `RUNNING` jobs are interrupts and will
+  // begin to terminate. This is an asynchronous operation and it may take some time for a `RUNNING` job to transition
+  // to `DONE`. In fact, a job may still succeed or fail after `StopJob` has been called. Users should monitor job
+  // status with `GetJob` until the job is `DONE`."
+  rpc StopJob (StopJobRequest) returns (StopJobResponse) {
+    option (google.api.http) = {
+      post: "/api/v1beta1/jobs/{job_id}:stop"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "stop"
+      description:
+        "Signal a job to stop.\n\n"
+        "* If the job is `PENDING`, it will immediately transition to `DONE`.\n"
+        "* If the job is `RUNNING`, then the job will interrupt its work and terminate.\n"
+        "* If the job is `DONE`, `stop` has no effect.\n\n"
+        "*Note*: this is an asynchronous operation and it may take some time before a `RUNNING` job transitions to "
+        "`DONE`. In fact, a job may still succeed or fail after `stop` has been signalled. Users should monitor job "
+        "status with `get` until the job is `DONE`."
+    };
+  }
+
+  // Creates a new job and starts planning and execution.
+  rpc CreateJob (CreateJobRequest) returns (Job) {
+    option (google.api.http) = {
+      post: "/api/v1beta1/jobs"
+      body: "job"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "create"
+      description: "Create a job for immediate execution."
+    };
+  }
+}
+
+message CreateJobRequest {
+  // Required. Definition of the job to create.
+  Job job = 1 [(google.api.field_behavior) = REQUIRED];;
+}
+
+message GetJobRequest {
+  // Required. ID of the job to fetch.
+  string job_id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// Describes configuration and status of a job.
+message Job {
+  // Output only. ID of the job.
+  string job_id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Required. What the job does.
+  JobConfiguration configuration = 2 [(google.api.field_behavior) = REQUIRED];
+
+  // Output only. Current status of the job
+  JobStatus status = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Output only. Past statuses of the job.
+  repeated JobStatus status_history = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+// Required. Set only one type. What the job does.
+message JobConfiguration {
+  // [Pick one] Load source data.
+  message LoadJob {
+    // Required. Source to load.
+    string source_id = 1 [(google.api.field_behavior) = REQUIRED];
+  }
+
+  // [Pick one] Publish data to a destination.
+  message PublishJob {
+    // Required. Destination to refresh.
+    string destination_id = 1 [(google.api.field_behavior) = REQUIRED];
+  }
+
+  // [Pick one] Run a data product flow to update results.
+  message UpdateJob {
+    // Required. Data product to update.
+    string data_product_id = 1 [(google.api.field_behavior) = REQUIRED];
+  }
+
+  oneof job_type {
+    LoadJob load = 1;
+
+    UpdateJob update = 2;
+
+    PublishJob publish = 3;
+  }
+}
+
+// Represents the lifecycle of a job.
+enum JobState {
+  // The job state value is unset.
+  STATE_UNSPECIFIED = 0;
+
+  // The job has been received but has not begun to execute.
+  PENDING = 1;
+
+  // The job is actively executing.
+  RUNNING = 2;
+
+  // A signal to stop has been received, but the job is still running.
+  STOPPING = 3;
+
+  // The job is done.
+  DONE = 4;
+}
+
+// Output only. Describes execution status and errors.
+message JobStatus {
+  // Output only. State of job execution.
+  JobState state = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Output only. Time when the job entered this state.
+  google.protobuf.Timestamp state_start_time = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Optional. Output only. If present, indicates that the job is done and was unsuccessful.
+  Error error = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message ListJobsRequest {
+  // Optional. The maximum number of jobs to return. Default is 10, and the maximum allowed is 30.
+  uint32 page_size = 1;
+
+  // Optional. The next_page_token value returned from a previous response. Set this value to continue paging.
+  string page_token = 2;
+}
+
+message ListJobsResponse {
+  // A page of results. Jobs are ordered by start time, most recent first.
+  repeated Job jobs = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more results in the list.
+  string next_page_token = 2;
+}
+
+message StopJobRequest {
+  // Required. ID of the job to stop.
+  string job_id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message StopJobResponse {
+}
