@@ -9,6 +9,7 @@ option java_multiple_files = true;
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 import "tamr/api/v1beta1/errors.proto";
 
 service Jobs {
@@ -17,12 +18,20 @@ service Jobs {
     option (google.api.http) = {
       get: "/api/v1beta1/jobs/{job_id}"
     };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "get"
+      description: "Fetch details of a job, including its configuration and status."
+    };
   }
 
   // Lists a page of jobs.
   rpc ListJobs (ListJobsRequest) returns (ListJobsResponse) {
     option (google.api.http) = {
       get: "/api/v1beta1/jobs"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "list"
+      description: "Fetch a page of jobs."
     };
   }
 
@@ -35,6 +44,17 @@ service Jobs {
       post: "/api/v1beta1/jobs/{job_id}:stop"
       body: "*"
     };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "stop"
+      description:
+          "Signal a job to stop.\n\n"
+              "* If the job is `PENDING`, it will immediately transition to `DONE`.\n"
+              "* If the job is `RUNNING`, then the job will interrupt its work and terminate.\n"
+              "* If the job is `DONE`, `stop` has no effect.\n\n"
+              "*Note*: this is an asynchronous operation and it may take some time before a `RUNNING` job transitions to "
+              "`DONE`. In fact, a job may still succeed or fail after `stop` has been signalled. Users should monitor job "
+              "status with `get` until the job is `DONE`."
+    };
   }
 
   // Creates a new job and starts planning and execution.
@@ -42,6 +62,10 @@ service Jobs {
     option (google.api.http) = {
       post: "/api/v1beta1/jobs"
       body: "job"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "create"
+      description: "Create a job for immediate execution."
     };
   }
 }
