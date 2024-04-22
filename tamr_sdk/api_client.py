@@ -6,4 +6,3 @@ class TamrApiClient:
 
     def jobs(self):
         return JobsClient(self.host)
-
