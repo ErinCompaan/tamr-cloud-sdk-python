@@ -1,3 +1,4 @@
 build/*
 .sdk_env/*
 __pycache__/
+.idea/*

@@ -3,8 +3,6 @@ build/dependencies/googleapis:
 	cd build/dependencies && git clone https://github.com/googleapis/googleapis
 
 generateProto: build/dependencies/googleapis
-	mkdir -p build/generated/python_grpc
-	mkdir -p build/generated/python
 	protoc proto/tamr/api/**/*.proto \
 	    -I='proto' \
 	    -I='build/dependencies/googleapis' \
@@ -19,3 +17,5 @@ generateProto: build/dependencies/googleapis
 
 clean:
 	rm -rf build
+	rm -rf tamr
+	rm -rf protoc_gen_openapiv2
