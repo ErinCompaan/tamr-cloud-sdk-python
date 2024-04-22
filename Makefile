@@ -5,7 +5,7 @@ build/dependencies/googleapis:
 generateProto: build/dependencies/googleapis
 	mkdir -p build/generated/python_grpc
 	mkdir -p build/generated/python
-	protoc proto/tamr/api/v1beta1/*.proto \
+	protoc proto/tamr/api/**/*.proto \
 	    -I='proto' \
 	    -I='build/dependencies/googleapis' \
 	    -I='proto/protoc-gen-openapiv2/options' \
