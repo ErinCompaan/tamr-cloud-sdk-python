@@ -6,6 +6,7 @@ jobs:
   generate_proto:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Install Protoc
         uses: arduino/setup-protoc@v3
       - name: Fetching base branch
