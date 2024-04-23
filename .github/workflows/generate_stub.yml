@@ -1,0 +1,17 @@
+name: proto
+
+on: [pull_request]
+
+jobs:
+  generate_proto:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+      - name: Fetching base branch
+        run: |
+            git fetch -u origin ${{ github.base_ref }}:${{ github.base_ref }}
+      - name: clean
+        run: make clean
+      - name: generating protos
+        run: make generateProto
