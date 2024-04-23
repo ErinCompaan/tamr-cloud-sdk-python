@@ -12,6 +12,10 @@ jobs:
       - name: Fetching base branch
         run: |
             git fetch -u origin ${{ github.base_ref }}:${{ github.base_ref }}
+      - name: Install dependencies
+        run: |
+          apt-get update && apt-get install -y --no-install-recommends python3.9 protobuf-compiler-grpc \
+            && ln -s /usr/bin/grpc_python_plugin /usr/bin/protoc-gen-grpc_python
       - name: clean
         run: make clean
       - name: generating protos
