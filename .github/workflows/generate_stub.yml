@@ -1,0 +1,23 @@
+name: proto
+
+on: [pull_request]
+
+jobs:
+  generate_proto:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+      - name: Fetching base branch
+        run: |
+            git fetch -u origin ${{ github.base_ref }}:${{ github.base_ref }}
+      - name: Install dependencies
+        run: |
+          sudo apt-get update 
+          sudo apt-get install -y --no-install-recommends python3.9 protobuf-compiler-grpc
+          sudo ln -s /usr/bin/grpc_python_plugin /usr/bin/protoc-gen-grpc_python
+      - name: clean
+        run: make clean
+      - name: generating protos
+        run: make generateProto
