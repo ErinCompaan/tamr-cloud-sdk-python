@@ -8,12 +8,14 @@ generateProto: build/dependencies/googleapis
 	    -I='build/dependencies/googleapis' \
 	    -I='proto/protoc-gen-openapiv2/options' \
 	    --grpc_python_out=. \
-	    --python_out=.
+	    --python_out=. \
+			--pyi_out=.
 	protoc proto/protoc-gen-openapiv2/options/*.proto \
     	-I='proto' \
     	-I='build/dependencies/googleapis' \
     	--grpc_python_out=. \
-    	--python_out=.
+    	--python_out=. \
+      --pyi_out=.
 
 clean:
 	rm -rf build
