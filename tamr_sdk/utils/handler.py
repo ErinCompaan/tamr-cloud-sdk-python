@@ -14,17 +14,25 @@ def exception_handler(
     def handle_grpc_status_codes(
         _self: SelfT, *args: ArgT.args, **kwargs: ArgT.kwargs
     ) -> ReturnT:
+        grpc_stack_trace = _self.grpc_stack_trace
         try:
             func(_self, *args, **kwargs)
         except grpc._channel._InactiveRpcError as e:
             if e.code() == grpc.StatusCode.NOT_FOUND:
-                raise ValueError(e.details())
+                if not grpc_stack_trace:
+                    raise ValueError(e.details()) from None
+                else:
+                    raise ValueError(e.details())
             elif e.code() == grpc.StatusCode.UNAVAILABLE:
-                raise ConnectionError(e.details())
+                if not grpc_stack_trace:
+                    raise ConnectionError(e.details()) from None
+                else:
+                    raise ConnectionError(e.details())
             elif e.code() == grpc.StatusCode.UNAUTHENTICATED:
-                raise ConnectionRefusedError(
-                    "Error connecting to client. Authentication is not valid"
-                )
+                if not grpc_stack_trace:
+                    raise ConnectionRefusedError("Error connecting to client. Authentication is not valid") from None
+                else:
+                    raise ConnectionRefusedError("Error connecting to client. Authentication is not valid")
             else:
                 raise e
 

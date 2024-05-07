@@ -5,11 +5,12 @@ from tamr.api.v1beta1 import jobs_pb2 as jobs
 from tamr_sdk.utils.handler import exception_handler
 
 class JobsClient:
-    def __init__(self, host, metadata):
+    def __init__(self, host, metadata, grpc_stack_trace=False):
         credentials = grpc.ssl_channel_credentials()
         channel = grpc.secure_channel(host, credentials)
         self.metadata = metadata
         self.stub = JobsStub(channel)
+        self.grpc_stack_trace = grpc_stack_trace
 
     @exception_handler
     def get_job(self, job_id):
