@@ -5,31 +5,28 @@ import warnings
 
 from tamr.api.v1beta1 import jobs_pb2 as tamr_dot_api_dot_v1beta1_dot_jobs__pb2
 
-GRPC_GENERATED_VERSION = "1.63.0"
+GRPC_GENERATED_VERSION = '1.63.0'
 GRPC_VERSION = grpc.__version__
-EXPECTED_ERROR_RELEASE = "1.65.0"
-SCHEDULED_RELEASE_DATE = "June 25, 2024"
+EXPECTED_ERROR_RELEASE = '1.65.0'
+SCHEDULED_RELEASE_DATE = 'June 25, 2024'
 _version_not_supported = False
 
 try:
     from grpc._utilities import first_version_is_lower
-
-    _version_not_supported = first_version_is_lower(
-        GRPC_VERSION, GRPC_GENERATED_VERSION
-    )
+    _version_not_supported = first_version_is_lower(GRPC_VERSION, GRPC_GENERATED_VERSION)
 except ImportError:
     _version_not_supported = True
 
 if _version_not_supported:
     warnings.warn(
-        f"The grpc package installed is at version {GRPC_VERSION},"
-        + f" but the generated code in tamr/api/v1beta1/jobs_pb2_grpc.py depends on"
-        + f" grpcio>={GRPC_GENERATED_VERSION}."
-        + f" Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}"
-        + f" or downgrade your generated code using grpcio-tools<={GRPC_VERSION}."
-        + f" This warning will become an error in {EXPECTED_ERROR_RELEASE},"
-        + f" scheduled for release on {SCHEDULED_RELEASE_DATE}.",
-        RuntimeWarning,
+        f'The grpc package installed is at version {GRPC_VERSION},'
+        + f' but the generated code in tamr/api/v1beta1/jobs_pb2_grpc.py depends on'
+        + f' grpcio>={GRPC_GENERATED_VERSION}.'
+        + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
+        + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
+        + f' This warning will become an error in {EXPECTED_ERROR_RELEASE},'
+        + f' scheduled for release on {SCHEDULED_RELEASE_DATE}.',
+        RuntimeWarning
     )
 
 
@@ -43,45 +40,43 @@ class JobsStub(object):
             channel: A grpc.Channel.
         """
         self.GetJob = channel.unary_unary(
-            "/tamr.api.v1beta1.Jobs/GetJob",
-            request_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.GetJobRequest.SerializeToString,
-            response_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.Job.FromString,
-            _registered_method=True,
-        )
+                '/tamr.api.v1beta1.Jobs/GetJob',
+                request_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.GetJobRequest.SerializeToString,
+                response_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.Job.FromString,
+                _registered_method=True)
         self.ListJobs = channel.unary_unary(
-            "/tamr.api.v1beta1.Jobs/ListJobs",
-            request_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.ListJobsRequest.SerializeToString,
-            response_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.ListJobsResponse.FromString,
-            _registered_method=True,
-        )
+                '/tamr.api.v1beta1.Jobs/ListJobs',
+                request_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.ListJobsRequest.SerializeToString,
+                response_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.ListJobsResponse.FromString,
+                _registered_method=True)
         self.StopJob = channel.unary_unary(
-            "/tamr.api.v1beta1.Jobs/StopJob",
-            request_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.StopJobRequest.SerializeToString,
-            response_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.StopJobResponse.FromString,
-            _registered_method=True,
-        )
+                '/tamr.api.v1beta1.Jobs/StopJob',
+                request_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.StopJobRequest.SerializeToString,
+                response_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.StopJobResponse.FromString,
+                _registered_method=True)
         self.CreateJob = channel.unary_unary(
-            "/tamr.api.v1beta1.Jobs/CreateJob",
-            request_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.CreateJobRequest.SerializeToString,
-            response_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.Job.FromString,
-            _registered_method=True,
-        )
+                '/tamr.api.v1beta1.Jobs/CreateJob',
+                request_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.CreateJobRequest.SerializeToString,
+                response_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.Job.FromString,
+                _registered_method=True)
 
 
 class JobsServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetJob(self, request, context):
-        """Gets details of a job."""
+        """Gets details of a job.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def ListJobs(self, request, context):
-        """Lists a page of jobs."""
+        """Lists a page of jobs.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def StopJob(self, request, context):
         """Signals a job to stop executing. `PENDING` jobs are cancelled immediately. `RUNNING` jobs are interrupts and will
@@ -90,66 +85,64 @@ class JobsServicer(object):
         status with `GetJob` until the job is `DONE`."
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def CreateJob(self, request, context):
-        """Creates a new job and starts planning and execution."""
+        """Creates a new job and starts planning and execution.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Method not implemented!")
-        raise NotImplementedError("Method not implemented!")
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
 
 def add_JobsServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        "GetJob": grpc.unary_unary_rpc_method_handler(
-            servicer.GetJob,
-            request_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.GetJobRequest.FromString,
-            response_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.Job.SerializeToString,
-        ),
-        "ListJobs": grpc.unary_unary_rpc_method_handler(
-            servicer.ListJobs,
-            request_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.ListJobsRequest.FromString,
-            response_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.ListJobsResponse.SerializeToString,
-        ),
-        "StopJob": grpc.unary_unary_rpc_method_handler(
-            servicer.StopJob,
-            request_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.StopJobRequest.FromString,
-            response_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.StopJobResponse.SerializeToString,
-        ),
-        "CreateJob": grpc.unary_unary_rpc_method_handler(
-            servicer.CreateJob,
-            request_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.CreateJobRequest.FromString,
-            response_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.Job.SerializeToString,
-        ),
+            'GetJob': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetJob,
+                    request_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.GetJobRequest.FromString,
+                    response_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.Job.SerializeToString,
+            ),
+            'ListJobs': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListJobs,
+                    request_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.ListJobsRequest.FromString,
+                    response_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.ListJobsResponse.SerializeToString,
+            ),
+            'StopJob': grpc.unary_unary_rpc_method_handler(
+                    servicer.StopJob,
+                    request_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.StopJobRequest.FromString,
+                    response_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.StopJobResponse.SerializeToString,
+            ),
+            'CreateJob': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateJob,
+                    request_deserializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.CreateJobRequest.FromString,
+                    response_serializer=tamr_dot_api_dot_v1beta1_dot_jobs__pb2.Job.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        "tamr.api.v1beta1.Jobs", rpc_method_handlers
-    )
+            'tamr.api.v1beta1.Jobs', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
-# This class is part of an EXPERIMENTAL API.
+ # This class is part of an EXPERIMENTAL API.
 class Jobs(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetJob(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def GetJob(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/tamr.api.v1beta1.Jobs/GetJob",
+            '/tamr.api.v1beta1.Jobs/GetJob',
             tamr_dot_api_dot_v1beta1_dot_jobs__pb2.GetJobRequest.SerializeToString,
             tamr_dot_api_dot_v1beta1_dot_jobs__pb2.Job.FromString,
             options,
@@ -160,26 +153,23 @@ class Jobs(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def ListJobs(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def ListJobs(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/tamr.api.v1beta1.Jobs/ListJobs",
+            '/tamr.api.v1beta1.Jobs/ListJobs',
             tamr_dot_api_dot_v1beta1_dot_jobs__pb2.ListJobsRequest.SerializeToString,
             tamr_dot_api_dot_v1beta1_dot_jobs__pb2.ListJobsResponse.FromString,
             options,
@@ -190,26 +180,23 @@ class Jobs(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def StopJob(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def StopJob(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/tamr.api.v1beta1.Jobs/StopJob",
+            '/tamr.api.v1beta1.Jobs/StopJob',
             tamr_dot_api_dot_v1beta1_dot_jobs__pb2.StopJobRequest.SerializeToString,
             tamr_dot_api_dot_v1beta1_dot_jobs__pb2.StopJobResponse.FromString,
             options,
@@ -220,26 +207,23 @@ class Jobs(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
 
     @staticmethod
-    def CreateJob(
-        request,
-        target,
-        options=(),
-        channel_credentials=None,
-        call_credentials=None,
-        insecure=False,
-        compression=None,
-        wait_for_ready=None,
-        timeout=None,
-        metadata=None,
-    ):
+    def CreateJob(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
-            "/tamr.api.v1beta1.Jobs/CreateJob",
+            '/tamr.api.v1beta1.Jobs/CreateJob',
             tamr_dot_api_dot_v1beta1_dot_jobs__pb2.CreateJobRequest.SerializeToString,
             tamr_dot_api_dot_v1beta1_dot_jobs__pb2.Job.FromString,
             options,
@@ -250,5 +234,4 @@ class Jobs(object):
             wait_for_ready,
             timeout,
             metadata,
-            _registered_method=True,
-        )
+            _registered_method=True)
