@@ -5,7 +5,10 @@ build/dependencies/googleapis:
 installProto: build/dependencies/googleapis
 	bash install_proto.sh
 
-generateProto: installProto
+linkPythonGRPC: installProto
+	bash link_python_grpc_plugin.sh
+
+generateProto: linkPythonGRPC
 	protoc proto/tamr/api/**/*.proto \
 	    -I='proto' \
 	    -I='build/dependencies/googleapis' \
