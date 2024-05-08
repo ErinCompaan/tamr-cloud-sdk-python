@@ -2,7 +2,10 @@ build/dependencies/googleapis:
 	mkdir -p build/dependencies
 	cd build/dependencies && git clone https://github.com/googleapis/googleapis
 
-generateProto: build/dependencies/googleapis
+installProto: build/dependencies/googleapis
+	bash install_proto.sh
+
+generateProto: installProto
 	protoc proto/tamr/api/**/*.proto \
 	    -I='proto' \
 	    -I='build/dependencies/googleapis' \
