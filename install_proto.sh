@@ -1,5 +1,4 @@
-PROTOC_EXISTS=$?
-if [ $PROTOC_EXISTS -eq 0 ]; then
+if command -v protoc; then
     echo "Protoc already installed"
 	PROTOC_VERSION=`protoc --version`
 	if [ "$PROTOC_VERSION" == "libprotoc 26.1" ]; then
