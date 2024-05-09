@@ -16,6 +16,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
   sudo apt-get update
   sudo apt-get install -y --no-install-recommends python3.9 protobuf-compiler-grpc
   sudo ln -s /usr/bin/grpc_python_plugin /usr/bin/protoc-gen-grpc_python
+  exit 0
 fi
 echo "Error: grpc_python_plugin not found. Please install protoc"
 exit 1
