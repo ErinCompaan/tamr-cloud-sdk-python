@@ -13,6 +13,10 @@ if command -v grpc_python_plugin; then
   ln -s "${canonicalPath}/$(basename $plugin_path)" "$(dirname $plugin_path)/protoc-gen-grpc_python"
   exit 0
 fi
-
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  sudo apt-get update
+  sudo apt-get install -y --no-install-recommends python3.9 protobuf-compiler-grpc
+  sudo ln -s /usr/bin/grpc_python_plugin /usr/bin/protoc-gen-grpc_python
+fi
 echo "Error: grpc_python_plugin not found. Please install protoc"
 exit 1
