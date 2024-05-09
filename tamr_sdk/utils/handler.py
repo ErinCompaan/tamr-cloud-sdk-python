@@ -16,7 +16,7 @@ def exception_handler(
     ) -> ReturnT:
         grpc_stack_trace = _self.grpc_stack_trace
         try:
-            func(_self, *args, **kwargs)
+            return func(_self, *args, **kwargs)
         except grpc._channel._InactiveRpcError as e:
             if e.code() == grpc.StatusCode.NOT_FOUND:
                 if not grpc_stack_trace:
