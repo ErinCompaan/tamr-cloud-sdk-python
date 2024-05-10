@@ -2,7 +2,7 @@ from tamr_sdk.api_client import TamrApiClient
 import time
 
 start = time.time()
-tamr_client = TamrApiClient('<host-name>', [('x-api-key', '<api-key>')])
+tamr_client = TamrApiClient('<host-name>', [('x-api-key', '<api-key>')], grpc_stack_trace=True)
 one = time.time()
 
 
