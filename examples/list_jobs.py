@@ -14,7 +14,7 @@ one = time.time()
 jobs = tamr_client.jobs()
 two = time.time()
 
-response =  jobs.list_jobs()
+response = jobs.list_jobs()
 three = time.time()
 
 response = jobs.get_job(job_id="<job-id>")
