@@ -1,3 +1,10 @@
+# Python path retrieval for lint/format command 
+VENV           = .sdk_env
+VENV_PYTHON    = $(VENV)/bin/python
+SYSTEM_PYTHON  = $(or $(shell which python3), $(shell which python))
+# If virtualenv exists, use it. If not, find python using PATH
+PYTHON         = $(or $(wildcard $(VENV_PYTHON)), $(SYSTEM_PYTHON))
+
 build/dependencies/googleapis:
 	mkdir -p build/dependencies
 	cd build/dependencies && git clone https://github.com/googleapis/googleapis
@@ -23,7 +30,20 @@ generateProto: linkPythonGRPC
 		--python_out=. \
 		--pyi_out=.
 
+.sdk_env_touchfile: requirements.txt requirements_dev.txt
+	$(PYTHON) -m pip install --upgrade pip && \
+	$(PYTHON) -m pip install -r requirements.txt && \
+	$(PYTHON) -m pip install -r requirements_dev.txt
+	touch .sdk_env_touchfile
+
+pythonEnv: .sdk_env_touchfile
+
+lintAndFormat: pythonEnv
+	$(PYTHON) -m ruff check --select I --fix && \
+  $(PYTHON) -m ruff format
+
 clean:
+	rm .sdk_env_touchfile
 	rm -rf build
 	rm -rf tamr
 	rm -rf protoc_gen_openapiv2
