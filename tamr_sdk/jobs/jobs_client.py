@@ -75,4 +75,5 @@ class JobsClient:
             result of request to start a job
         """
         request = jobs.CreateJobRequest(job=job_definition)
+
         return self.stub.CreateJob(request, metadata=self.metadata)

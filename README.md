@@ -16,3 +16,4 @@ To make it, run a command `python3.<minor version> -m venv .sdk_env` in the `tam
 Formatting and linting on pull requests are enforced via Github CI.
 
 To run formatting and linting locally and fix any auto-fixable issues, run `make lintAndFormat` in the `tamr-cloud-sdk-python` directory.
+To run linting without any auto-fixing, run `make lintAndFormat checkOnly=true`. 
