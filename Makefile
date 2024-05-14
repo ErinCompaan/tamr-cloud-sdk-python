@@ -43,7 +43,7 @@ lintAndFormat: pythonEnv
   $(PYTHON) -m ruff format
 
 clean:
-	rm .sdk_env_touchfile
+	rm -f .sdk_env_touchfile
 	rm -rf build
 	rm -rf tamr
 	rm -rf protoc_gen_openapiv2
