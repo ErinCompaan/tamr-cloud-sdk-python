@@ -1,6 +1,6 @@
 """gRPC client for Tamr Cloud."""
 
-from typing import Any, List, Tuple
+from typing import List, Tuple
 
 from tamr_sdk.jobs.jobs_client import JobsClient
 

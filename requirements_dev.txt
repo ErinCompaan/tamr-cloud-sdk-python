@@ -1,4 +1,5 @@
 grpc-stubs
-protobuf
+mypy
 ruff
 types-protobuf
+types-setuptools
