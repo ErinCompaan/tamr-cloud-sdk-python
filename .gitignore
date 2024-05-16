@@ -1,5 +1,6 @@
 .idea/*
 .sdk_env/*
+.sdk_env_touchfile
 build/*
 tamr_cloud_sdk.egg-info
 __pycache__/

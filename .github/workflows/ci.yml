@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - release-*
+  pull_request:
+    branches:
+      - main
+      - release-*
+  workflow_dispatch:
+
+jobs:
+  Lint_Format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.11
+    - name: Run ruff checks
+      run: make lintAndFormat checkOnly=true

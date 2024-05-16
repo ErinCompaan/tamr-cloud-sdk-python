@@ -1,4 +1,5 @@
-# External Modules
+"""Setup script for package installation."""
+
 from setuptools import setup
 
 setup(
@@ -8,9 +9,5 @@ setup(
     description="Package for interacting with Tamr Cloud APIs",
     author="Tamr",
     author_email="colin.reynolds@tamr.com",
-    packages=[
-        "tamr_sdk",
-        "tamr",
-        "protoc_gen_openapiv2"
-    ],
+    packages=["tamr_sdk", "tamr", "protoc_gen_openapiv2"],
 )
