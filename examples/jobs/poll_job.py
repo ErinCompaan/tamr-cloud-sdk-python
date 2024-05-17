@@ -1,10 +1,12 @@
 """Example script for polling a job from the Jobs API."""
 
-import time
 import json
-from google.protobuf.json_format import MessageToJson
-from tamr_sdk.api_client import TamrApiClient
+import time
 from datetime import datetime
+
+from google.protobuf.json_format import MessageToJson
+
+from tamr_sdk.api_client import TamrApiClient
 
 timestamp_format = "%Y-%m-%dT%H:%M:%S.%fZ"
 
@@ -13,9 +15,17 @@ tamr_client = TamrApiClient(
 )
 
 
-def calculate_runtime(start_str, stop_str):
-    start = datetime.strptime(start_str, timestamp_format)
-    stop = datetime.strptime(stop_str, timestamp_format)
+def calculate_runtime(job_id):
+    """Calculates runtime (hours, minutes, seconds) for a job.
+
+    Args:
+        job_id: job_id string (e.g. 'job_*********')
+    """
+    job = json.loads(MessageToJson(tamr_client.jobs().get_job(job_id)))
+    stop = job["status"]["stateStartTime"]
+    start = job["statusHistory"][-1]["stateStartTime"]
+    start = datetime.strptime(start, timestamp_format)
+    stop = datetime.strptime(stop, timestamp_format)
     difference = stop - start
     hours, remainder = divmod(difference.seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
@@ -24,16 +34,17 @@ def calculate_runtime(start_str, stop_str):
 
 
 def check_for_done(job_id):
+    """Polls job and returns runtime when finished, or returns status if the job is not running, pending, or done.
+
+    Args:
+        job_id: job_id string (e.g. 'job_*********')
+    """
     while True:
         # Check for the string 'DONE' in the get job response
-        job = tamr_client.jobs().get_job(job_id)
-        state = json.loads(MessageToJson(job))["status"]["state"]
+        job = json.loads(MessageToJson(tamr_client.jobs().get_job(job_id)))
+        state = job["status"]["state"]
         if state == "DONE":
-            stop = json.loads(MessageToJson(job))["status"]["stateStartTime"]
-            start = json.loads(MessageToJson(job))["statusHistory"][-1][
-                "stateStartTime"
-            ]
-            hours, minutes, seconds = calculate_runtime(stop, start)
+            hours, minutes, seconds = calculate_runtime(job_id)
             print(
                 f"'{job_id}' finished in {hours} hours, {minutes} minutes, {seconds} seconds"
             )
