@@ -9,7 +9,7 @@ from datetime import datetime
 timestamp_format = "%Y-%m-%dT%H:%M:%S.%fZ"
 
 tamr_client = TamrApiClient(
-    #    "<host-name>", [("x-api-key", "<api-key>")], grpc_stack_trace=True
+    "<host-name>", [("x-api-key", "<api-key>")], grpc_stack_trace=True
 )
 
 
