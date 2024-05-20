@@ -4,3 +4,4 @@
 build/*
 tamr_cloud_sdk.egg-info
 __pycache__/
+dist/*
