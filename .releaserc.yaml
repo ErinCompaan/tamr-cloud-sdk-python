@@ -6,7 +6,7 @@ plugins:
   - "@semantic-release/release-notes-generator"
   - - "@semantic-release/exec"
     - prepareCmd: "pip install toml-cli && toml set --toml-path pyproject.toml tool.poetry.version ${nextRelease.version}"
-      publishCmd: "poetry install --no-dev && poetry publish -r artifactory --build"
+      publishCmd: "poetry install --no-dev && poetry publish -r artifact-registry --build"
   - - "@semantic-release/github"
     - assets:
       - path: "dist/tamr_cloud_sdk*"
