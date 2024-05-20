@@ -1,12 +1,11 @@
 """Wrapper(s) for API response handling."""
+
 from __future__ import annotations
-from typing import Callable, TypeVar
+
+from typing import TYPE_CHECKING, Callable, TypeVar
 
 import grpc
 from typing_extensions import Concatenate, ParamSpec
-
-from typing import TYPE_CHECKING
-
 
 if TYPE_CHECKING:
     from tamr_sdk.api_client import TamrApiClient
