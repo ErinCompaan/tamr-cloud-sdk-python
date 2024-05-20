@@ -1,4 +1,8 @@
+grpc-stubs
+mypy
 ruff
+types-protobuf
+types-setuptools
 
 # Documentation
 myst-parser==3.0.1

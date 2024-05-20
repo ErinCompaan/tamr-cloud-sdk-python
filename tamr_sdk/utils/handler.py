@@ -5,7 +5,10 @@ from typing import Callable, TypeVar
 import grpc
 from typing_extensions import Concatenate, ParamSpec
 
-SelfT = TypeVar("SelfT")
+from tamr_sdk.api_client import TamrApiClient
+from tamr_sdk.jobs.jobs_client import JobsClient
+
+SelfT = TypeVar("SelfT", JobsClient, TamrApiClient)
 ArgT = ParamSpec("ArgT")
 ReturnT = TypeVar("ReturnT")
 
@@ -43,7 +46,8 @@ def exception_handler(
         grpc_stack_trace = _self.grpc_stack_trace
         try:
             return func(_self, *args, **kwargs)
-        except grpc._channel._InactiveRpcError as e:
+        except grpc._channel._InactiveRpcError as e:  # type: ignore[attr-defined]
+            new_err: Exception
             if e.code() == grpc.StatusCode.NOT_FOUND:
                 new_err = ValueError(e.details())
             elif e.code() == grpc.StatusCode.UNAVAILABLE:
