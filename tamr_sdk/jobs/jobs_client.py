@@ -1,5 +1,7 @@
 """gRPC Client for Jobs API."""
 
+from typing import List, Optional, Tuple
+
 import grpc
 
 from tamr.api.v1beta1 import jobs_pb2 as jobs
@@ -10,7 +12,9 @@ from tamr_sdk.utils.handler import exception_handler
 class JobsClient:
     """gRPC client for the Jobs API."""
 
-    def __init__(self, host, metadata, grpc_stack_trace=False):
+    def __init__(
+        self, host: str, metadata: List[Tuple[str, str]], grpc_stack_trace: bool = False
+    ):
         """Initialize the Jobs client.
 
         Args:
@@ -18,14 +22,14 @@ class JobsClient:
             metadata: additional configuration for the client
             grpc_stack_trace: whether to log full gRPC stack trace on error
         """
-        credentials = grpc.ssl_channel_credentials()
-        channel = grpc.secure_channel(host, credentials)
+        credentials: grpc.ChannelCredentials = grpc.ssl_channel_credentials()
+        channel: grpc.Channel = grpc.secure_channel(host, credentials)
         self.metadata = metadata
         self.stub = JobsStub(channel)
-        self.grpc_stack_trace = grpc_stack_trace
+        self.grpc_stack_trace: bool = grpc_stack_trace
 
     @exception_handler
-    def get_job(self, job_id: str):
+    def get_job(self, job_id: str) -> jobs.Job:
         """Get a specific job by ID.
 
         Args:
@@ -35,10 +39,13 @@ class JobsClient:
             job information
         """
         request = jobs.GetJobRequest(job_id=job_id)
-        return self.stub.GetJob(request, metadata=self.metadata)
+        j: jobs.Job = self.stub.GetJob(request, metadata=self.metadata)
+        return j
 
     @exception_handler
-    def list_jobs(self, page_size=10, page_token=None):
+    def list_jobs(
+        self, page_size: int = 10, page_token: Optional[str] = None
+    ) -> jobs.ListJobsResponse:
         """Get a list of all jobs from the client.
 
         Args:
@@ -49,10 +56,11 @@ class JobsClient:
             list of job information
         """
         request = jobs.ListJobsRequest(page_size=page_size, page_token=page_token)
-        return self.stub.ListJobs(request, metadata=self.metadata)
+        r: jobs.ListJobsResponse = self.stub.ListJobs(request, metadata=self.metadata)
+        return r
 
     @exception_handler
-    def stop_job(self, job_id):
+    def stop_job(self, job_id: str) -> jobs.StopJobResponse:
         """Send a request to stop a job.
 
         Args:
@@ -62,10 +70,11 @@ class JobsClient:
             result of request to stop job
         """
         request = jobs.StopJobRequest(job_id=job_id)
-        return self.stub.StopJob(request, metadata=self.metadata)
+        r: jobs.StopJobResponse = self.stub.StopJob(request, metadata=self.metadata)
+        return r
 
     @exception_handler
-    def create_job(self, job_definition):
+    def create_job(self, job_definition: jobs.Job) -> jobs.Job:
         """Send a request to start a job.
 
         Args:
@@ -75,5 +84,5 @@ class JobsClient:
             result of request to start a job
         """
         request = jobs.CreateJobRequest(job=job_definition)
-
-        return self.stub.CreateJob(request, metadata=self.metadata)
+        r: jobs.Job = self.stub.CreateJob(request, metadata=self.metadata)
+        return r
