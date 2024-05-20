@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "tamr_cloud_sdk"
+version = "0.dev"
+description = "A package that facilitates the use of Tamr Cloud APIs in python"
+authors = ["Tamr Inc."]
+readme = "README.md"
+packages = [
+    { include = "tamr_sdk" },
+    { include = "tamr" },
+    { include = "protoc_gen_openapiv2" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+google-api-python-client = "2.126.0"
+grpcio = "1.62.2"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "0.4.4"
+
+[tool.semantic_release]
+version_variable = [
+    "pyproject.toml:version",
+]
+branch = "main"
+upload_to_pypi = false
+upload_to_release = true
+build_command = "pip install poetry && poetry build"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
