@@ -11,7 +11,7 @@ environment within the parent directory named `.sdk_env`.
 
 To make it, run a command `python3.<minor version> -m venv .sdk_env` in the `tamr-cloud-sdk-python` directory. The minimum minor version supported can be checked by looking in the `setup.py` file. 
 
-#### Linting and formatting
+#### Linting, formatting, and type enforcement
 
 Formatting and linting on pull requests are enforced via Github CI.
 

@@ -38,8 +38,9 @@ generateProto: linkPythonGRPC
 
 pythonEnv: .sdk_env_touchfile
 
-# Commands for isort, linting, and formatting
+# Commands for isort, linting, formatting, and type checking
 lintAndFormat: pythonEnv
+	mypy
 	@if [ "$(checkOnly)" = "true" ]; then \
 			$(PYTHON) -m ruff check && \
 			$(PYTHON) -m ruff format --check; \
