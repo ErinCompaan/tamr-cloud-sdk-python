@@ -1,0 +1,112 @@
+@Library('ops') _
+def notifier = new com.tamr.jenkins.slack.SlackNotifier()
+def helper = new com.tamr.jenkins.util.JenkinsHelper()
+
+podTemplate(
+    containers: [
+        containerTemplate(
+            name: 'python-poetry',
+            image: 'us-docker.pkg.dev/tamr-docker/ops/python-poetry:latest',
+            resourceLimitCpu: "2",
+            resourceLimitMemory: "2048Mi",
+            resourceRequestCpu: "100m",
+            resourceRequestMemory: "1024Mi",
+            ttyEnabled: true,
+            command: 'cat'
+        ),
+        containerTemplate(
+            name: 'python-poetry-with-java-8',
+            image: 'us-docker.pkg.dev/tamr-docker/ops/python-poetry-with-java8:latest',
+            resourceLimitCpu: "2",
+            resourceLimitMemory: "2048Mi",
+            resourceRequestCpu: "100m",
+            resourceRequestMemory: "1024Mi",
+            ttyEnabled: true,
+            command: 'cat'
+        ),
+        containerTemplate(
+            name: 'semantic-release-poetry',
+            image: 'us-docker.pkg.dev/tamr-docker/ops/semantic-release-poetry:latest',
+            alwaysPullImage: false,
+            ttyEnabled: true,
+            command: 'cat'
+        ),
+        containerTemplate(
+            name: 'jnlp',
+            image: 'us-docker.pkg.dev/tamr-docker/ops/jenkins-agent:latest',
+            alwaysPullImage: false,
+            privileged: false,
+            // Resources for jnlp container
+            resourceLimitCpu: "2",
+            resourceLimitMemory: "1Gi",
+            resourceRequestCpu: "300m",
+            resourceRequestMemory: "1Gi"
+        ),
+    ],
+    serviceAccount: "jenkins-emaas",
+    annotations: [
+      podAnnotation(key: "iam.gke.io/gcp-service-account", value: "jenkins-emaas@tamr-internal-ci.iam.gserviceaccount.com")
+    ]
+) {
+  node(POD_LABEL) {
+    helper.cancelPreviousBuilds()
+
+    def projectName = helper.getProjectName().tokenize('/').last()
+    def projectRepo = scm.userRemoteConfigs.first().url - '.git'
+
+    stage('Checkout') {
+      echo projectName
+      echo projectRepo
+      checkout([
+          $class           : 'GitSCM',
+          branches         : scm.branches,
+          extensions       : scm.extensions + [[$class: 'CloneOption', noTags: false]],
+          userRemoteConfigs: scm.userRemoteConfigs
+      ])
+      sh 'pwd'
+      sh 'id'
+      sh 'export'
+      sh 'ls -l .'
+    }
+    try {
+      container('python-poetry-with-java-8') {
+
+        stage('Build tamr_sdk') {
+          timeout(time: 10, unit: 'MINUTES') {
+            {
+              sh """
+                  poetry build
+                  """
+            }
+          }
+        }
+      }
+
+      container("semantic-release-poetry") {
+        stage('Lint Commits') {
+          if (helper.isPRBuild()) {
+            sh "./cicd/scripts/lint-commits.sh"
+          }
+        }
+      }
+
+      stage('Release') {
+          if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
+            container("semantic-release-poetry") {
+              withCredentials([string(credentialsId: 'github-oauth', variable: 'GH_TOKEN')]) {
+                withEnv(["GH_TOKEN=${GH_TOKEN}"]) {
+                  sh "semantic-release --dry-run"
+              }
+              if (helper.getBranchName() == 'main' && !helper.isPRBuild()) {
+                withEnv(["GH_TOKEN=${GH_TOKEN}"]) {
+                      sh "poetry config repositories.artifact-registry"
+                      sh "semantic-release"
+                  }
+                }
+              }
+            }
+          }
+      }
+    }
+  }
+}

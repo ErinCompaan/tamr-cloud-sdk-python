@@ -1,16 +1,19 @@
 """Wrapper(s) for API response handling."""
 
-from typing import Callable, TypeVar
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Callable, TypeVar
 
 import grpc
 from typing_extensions import Concatenate, ParamSpec
 
-from tamr_sdk.api_client import TamrApiClient
-from tamr_sdk.jobs.jobs_client import JobsClient
+if TYPE_CHECKING:
+    from tamr_sdk.api_client import TamrApiClient
+    from tamr_sdk.jobs.jobs_client import JobsClient
 
-SelfT = TypeVar("SelfT", JobsClient, TamrApiClient)
-ArgT = ParamSpec("ArgT")
-ReturnT = TypeVar("ReturnT")
+    SelfT = TypeVar("SelfT", JobsClient, TamrApiClient)
+    ArgT = ParamSpec("ArgT")
+    ReturnT = TypeVar("ReturnT")
 
 
 def exception_handler(
