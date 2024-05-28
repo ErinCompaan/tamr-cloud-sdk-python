@@ -58,5 +58,3 @@ split-on-trailing-comma=false
 
 [lint.mccabe]
 max-complexity = 6
-
-
