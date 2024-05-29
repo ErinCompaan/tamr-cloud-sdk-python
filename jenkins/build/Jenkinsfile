@@ -85,7 +85,7 @@ podTemplate(
       container("semantic-release-poetry") {
         stage('Lint Commits') {
           if (helper.isPRBuild()) {
-            sh "./cicd/scripts/lint-commits.sh"
+            sh "./jenkins/build/scripts/lint-commits.sh"
           }
         }
 
