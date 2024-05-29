@@ -43,9 +43,9 @@ podTemplate(
             resourceRequestMemory: "1Gi"
         ),
     ],
-    serviceAccount: "jenkins-emaas",
+    serviceAccount: "jenkins-tamr",
     annotations: [
-      podAnnotation(key: "iam.gke.io/gcp-service-account", value: "jenkins-emaas@tamr-internal-ci.iam.gserviceaccount.com")
+      podAnnotation(key: "iam.gke.io/gcp-service-account", value: "jenkins-tamr@tamr-internal-ci.iam.gserviceaccount.com")
     ]
 ) {
   node(POD_LABEL) {
