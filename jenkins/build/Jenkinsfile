@@ -1,4 +1,4 @@
-@Library('tamr') _
+@Library('ops') _
 def notifier = new com.tamr.jenkins.slack.SlackNotifier()
 def helper = new com.tamr.jenkins.util.JenkinsHelper()
 
