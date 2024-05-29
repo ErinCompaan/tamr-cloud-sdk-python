@@ -83,6 +83,8 @@ podTemplate(
       }
 
       container("semantic-release-poetry") {
+        sh(returnStdout: true, script: 'git config --global --add safe.directory `pwd`')
+
         stage('Lint Commits') {
           if (helper.isPRBuild()) {
             sh "bash jenkins/build/scripts/lint-commits.sh"
