@@ -43,9 +43,9 @@ podTemplate(
             resourceRequestMemory: "1Gi"
         ),
     ],
-    serviceAccount: "jenkins-emaas",
+    serviceAccount: "jenkins-tamr",
     annotations: [
-      podAnnotation(key: "iam.gke.io/gcp-service-account", value: "jenkins-emaas@tamr-internal-ci.iam.gserviceaccount.com")
+      podAnnotation(key: "iam.gke.io/gcp-service-account", value: "jenkins-tamr@tamr-internal-ci.iam.gserviceaccount.com")
     ]
 ) {
   node(POD_LABEL) {
@@ -73,7 +73,7 @@ podTemplate(
 
         stage('Build tamr_sdk') {
           timeout(time: 10, unit: 'MINUTES') {
-            {
+            if (helper.isPRBuild()) {
               sh """
                   poetry build
                   """
@@ -83,22 +83,23 @@ podTemplate(
       }
 
       container("semantic-release-poetry") {
+        sh(returnStdout: true, script: 'git config --global --add safe.directory `pwd`')
+
         stage('Lint Commits') {
           if (helper.isPRBuild()) {
-            sh "./cicd/scripts/lint-commits.sh"
+            sh "bash jenkins/build/scripts/lint-commits.sh"
           }
         }
-      }
 
-      stage('Release') {
+        stage('Release') {
           if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
             container("semantic-release-poetry") {
               withCredentials([string(credentialsId: 'github-oauth', variable: 'GH_TOKEN')]) {
                 withEnv(["GH_TOKEN=${GH_TOKEN}"]) {
                   sh "semantic-release --dry-run"
-              }
-              if (helper.getBranchName() == 'main' && !helper.isPRBuild()) {
-                withEnv(["GH_TOKEN=${GH_TOKEN}"]) {
+                }
+                if (helper.getBranchName() == 'main' && !helper.isPRBuild()) {
+                  withEnv(["GH_TOKEN=${GH_TOKEN}"]) {
                       sh "poetry config repositories.artifact-registry"
                       sh "semantic-release"
                   }
@@ -106,7 +107,13 @@ podTemplate(
               }
             }
           }
+        }
       }
+    } catch (err) {
+      currentBuild.result = 'FAILURE'
+      println 'Pipeline failed!'
+      println err
+      err.printStackTrace()
     }
   }
 }
