@@ -107,6 +107,16 @@ podTemplate(
           }
         }
       }
+    } catch (err) {
+      currentBuild.result = 'FAILURE'
+      println 'Pipeline failed!'
+      println err
+      err.printStackTrace()
+    } finally {
+      stage('Publish Build') {
+        junit testResults: '**/build/test-results/**.xml'
+        publishCoverage adapters: [cobertura ('**/build/test-results/coverage.xml')]
+      }
     }
   }
 }
