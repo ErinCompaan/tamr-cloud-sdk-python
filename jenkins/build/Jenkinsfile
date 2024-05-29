@@ -73,7 +73,7 @@ podTemplate(
 
         stage('Build tamr_sdk') {
           timeout(time: 10, unit: 'MINUTES') {
-            {
+            if (helper.isPRBuild()) {
               sh """
                   poetry build
                   """
