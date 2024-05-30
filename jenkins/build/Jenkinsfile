@@ -100,7 +100,7 @@ podTemplate(
                 }
                 if (helper.getBranchName() == 'main' && !helper.isPRBuild()) {
                   withEnv(["GH_TOKEN=${GH_TOKEN}"]) {
-                      sh "poetry config repositories.artifact-registry"
+                      sh "poetry config repositories.artifact-registry https://us-east1-python.pkg.dev/tamr-python/pypi-local/"
                       sh "semantic-release"
                   }
                 }
