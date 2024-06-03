@@ -3,7 +3,8 @@ exclude = [
     '.sdk_env',
     'protoc_gen_openapiv2',
     'tamr',
-    'tamr_sdk/jobs/types_jobs.py'
+    'tamr_sdk/jobs/types_jobs.py',
+    'docs_src/conf.py'
 ]
 
 # Line length and indentation same as Black

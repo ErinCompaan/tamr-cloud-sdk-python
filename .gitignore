@@ -2,7 +2,8 @@
 .sdk_env/*
 .sdk_env_touchfile
 build/*
+dist/*
+docs_src/_build/
+poetry.lock
 tamr_cloud_sdk.egg-info
 __pycache__/
-dist/*
-poetry.lock
