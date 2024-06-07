@@ -4,6 +4,7 @@
 build/*
 dist/*
 docs_src/_build/
+examples/config.yaml
 poetry.lock
 tamr_cloud_sdk.egg-info
 __pycache__/

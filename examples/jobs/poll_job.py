@@ -1,61 +1,92 @@
 """Example script for polling a job from the Jobs API."""
 
-import json
+import datetime
+import logging
+import os
+import sys
 import time
-from datetime import datetime
 
-from google.protobuf.json_format import MessageToJson
+import yaml
 
+from tamr.api.v1beta1.jobs_pb2 import Job, JobState
 from tamr_sdk.api_client import TamrApiClient
+from tamr_sdk.jobs.jobs_client import JobsClient
 
-timestamp_format = "%Y-%m-%dT%H:%M:%S.%fZ"
-
-tamr_client = TamrApiClient(
-    "<host-name>", [("x-api-key", "<api-key>")], grpc_stack_trace=True
-)
+JOB_ID = "job_****************"
 
 
-def calculate_runtime(job_id):
-    """Calculates runtime (hours, minutes, seconds) for a job.
+def calculate_runtime(job: Job) -> datetime.timedelta:
+    """Calculates runtime for a job.
+
+    Assumes current status of job is "DONE". If job is not done, returns the
+    duration between start of job and beginning of job's current status.
 
     Args:
-        job_id: job_id string (e.g. 'job_*********')
+        job: Job object
+
+    Returns:
+        time delta object representing job duration
     """
-    job = json.loads(MessageToJson(tamr_client.jobs().get_job(job_id)))
-    stop = job["status"]["stateStartTime"]
-    start = job["statusHistory"][-1]["stateStartTime"]
-    start = datetime.strptime(start, timestamp_format)
-    stop = datetime.strptime(stop, timestamp_format)
-    difference = stop - start
-    hours, remainder = divmod(difference.seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-
-    return hours, minutes, seconds
+    stop = job.status.state_start_time
+    start = job.status_history[-1].state_start_time
+    diff = datetime.timedelta(
+        seconds=stop.seconds + stop.nanos * 1e-9 - start.seconds - start.nanos * 1e-9
+    )
+    return diff
 
 
-def check_for_done(job_id):
-    """Polls job and returns runtime when finished, or returns status if the job is not running, pending, or done.
+def poll_job(
+    *,
+    jobs_client: JobsClient,
+    job_id: str,
+    logger: logging.Logger,
+    polling_interval_sec: int = 5,
+) -> None:
+    """Poll job and return runtime when finished.
 
     Args:
+        jobs_client: Client instance associated with Tamr Cloud jobs service
         job_id: job_id string (e.g. 'job_*********')
+        logger: logging instance
+        polling_interval_sec: how frequently to re-check job status
     """
     while True:
-        # Check for the string 'DONE' in the get job response
-        job = json.loads(MessageToJson(tamr_client.jobs().get_job(job_id)))
-        state = job["status"]["state"]
-        if state == "DONE":
-            hours, minutes, seconds = calculate_runtime(job_id)
-            print(
-                f"'{job_id}' finished in {hours} hours, {minutes} minutes, {seconds} seconds"
-            )
+        # Check job status
+        job = jobs_client.get_job(job_id)
+        state = job.status.state
+        # Print info if complete
+        if state == JobState.DONE:
+            runtime = calculate_runtime(job)
+            logger.info(f"Job '{job_id}' finished in {runtime}.")
+            if job.status.error.message:
+                logger.warning(
+                    f"Job '{job_id}' raised error: {job.status.error.message}."
+                )
             break
-        if state not in ["DONE", "RUNNING", "PENDING"]:
-            print(f"'{job_id}' is {state}")
-            break
 
-        # Wait for 5 seconds before checking again
-        time.sleep(5)
+        # Wait before checking again
+        time.sleep(polling_interval_sec)
 
 
-job_id = "<job-id>"
-check_for_done(job_id)
+if __name__ == "__main__":
+    # Set up logging
+    logger = logging.getLogger()
+    logger.setLevel("INFO")
+    logger.addHandler(logging.StreamHandler(sys.stdout))
+
+    # Read Tamr Cloud configurations from file
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    config_path = os.path.join(dir_path, "..", "config.yaml")
+    with open(config_path) as stream:
+        config = yaml.safe_load(stream)
+
+    # Initialize Tamr Cloud jobs client
+    tamr_client = TamrApiClient(
+        config["tamr_cloud_host"],
+        [("x-api-key", config["tamr_api_key"])],
+        grpc_stack_trace=True,
+    )
+    jobs_client = tamr_client.jobs()
+    logger.info("Client initialization complete.")
+
+    poll_job(jobs_client=jobs_client, job_id=JOB_ID, logger=logger)
